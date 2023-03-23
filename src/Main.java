@@ -1,11 +1,17 @@
+import com.sun.jdi.event.StepEvent;
+
 public class Main {
     public static void main(String[] args) {
         System.out.println("Hello world!");
-        ProblemInstance problemInstance = new ProblemInstance("test_instances/d1_50_500.txt");
+        ProblemInstance problemInstance = new ProblemInstance("test_instances/d4_2047_495.txt");
+        System.out.println(problemInstance.getCurrentSolution().getBitString().size());
+        SteepestDescent steepestDescent = new SteepestDescent(10);
 
-        Solution solution = new Solution(problemInstance);
-        System.out.println(solution.toString());
-        System.out.println(solution.isSolutionValid());
-        System.out.println(solution.getObjectiveSolutionValue());
+        for(int i = 0; i < 1000; i++){
+            System.out.println(problemInstance.getCurrentSolution());
+            System.out.println(problemInstance.getCurrentSolution().currentObjectiveValue);
+            System.out.println();
+            steepestDescent.applyHueristic(problemInstance);
+        }
     }
 }

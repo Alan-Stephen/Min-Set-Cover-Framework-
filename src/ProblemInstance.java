@@ -13,6 +13,13 @@ public class ProblemInstance {
     private Solution currentSolution;
     private Solution bestSolution;
 
+    public void copySolution(Solution from, Solution to){
+        for(int i = 0; i < subsets.size(); i++){
+            to.getBitString().set(i,from.getBitString().get(i));
+        }
+        from.updateObjectiveSolutionValue();
+        to.updateObjectiveSolutionValue();
+    }
     public Solution getBackUpSolution() {
         return backUpSolution;
     }
@@ -70,6 +77,9 @@ public class ProblemInstance {
             System.out.println("ERROR : FILE NOT FOUND");
             e.printStackTrace();
         }
+        currentSolution = new Solution(this);
+        backUpSolution = new Solution(this);
+        bestSolution = new Solution(this);
     }
 
     public int getSubsetElement(int subsetID, int elementIndex){
