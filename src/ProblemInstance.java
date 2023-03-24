@@ -1,11 +1,10 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class ProblemInstance {
+
+    private Random random;
     private ArrayList<Subset> subsets = new ArrayList<Subset>();
     private int elementsInX;
 
@@ -44,7 +43,8 @@ public class ProblemInstance {
         this.bestSolution = bestSolution;
     }
 
-    ProblemInstance(String filePath){
+    ProblemInstance(String filePath, Random random){
+        this.random = random;
         try {
             File problemInstance = new File(filePath);
             Scanner reader = new Scanner(problemInstance);

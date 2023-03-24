@@ -1,19 +1,20 @@
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Random;
+import java.util.*;
 
 public class Solution {
     private ArrayList<Boolean> bitString= new ArrayList<>();
     private final int NUM_VARIABLES;
-    int[] x;
+    private int[] x;
+
+    private int setsUsed;
 
     int currentObjectiveValue = Integer.MAX_VALUE;
 
     public ArrayList<Boolean> getBitString(){
         return bitString;
     }
-    ProblemInstance problemInstance;
+    private ProblemInstance problemInstance;
+
+    // TODO : FIX OBJECTIVE VALUE FUNCTION
     public void updateObjectiveSolutionValue(){
         int count = 0;
         int value = NUM_VARIABLES + x.length;
@@ -53,8 +54,30 @@ public class Solution {
      * so no need to call updateObjectiveSolutionValue
      *
      * */
+
+    // todo : REDO the entire valuation system for delta eval
     public void flipBit(int index){
-        bitString.set(index,!(bitString.get(index)));
+        if(bitString.get(index)){
+            Subset currentSubset = problemInstance.getSubsets().get(index);
+            for(int i = 0; i < currentSubset.getSize(); i++){
+                x[currentSubset.getElement(i) - 1]--;
+            }
+            this.setsUsed--;
+        } else {
+            Subset currentSubset = problemInstance.getSubsets().get(index);
+            for(int i = 0; i < currentSubset.getSize(); i++){
+                x[currentSubset.getElement(i) - 1]++;
+            }
+            this.setsUsed++;
+        }
+        bitString.set(index,!bitString.get(index));
+
+        // do delta eval
+        int count = 0;
+        for(int i: x)
+            if(i != 0)
+                count++;
+        this.currentObjectiveValue = (x.length + NUM_VARIABLES) - (count + (NUM_VARIABLES - setsUsed));
     }
     private void constructInitialSolution() {
         problemInstance.getSubsets().sort(Comparator.comparingInt(Subset::getSize));
@@ -64,21 +87,21 @@ public class Solution {
         int currentSubsetIndex = problemInstance.getSubsets().size() - 1;
         while(updateElementsSatisfied() != x.length){
             int subsetId = problemInstance.getSubsets().get(currentSubsetIndex).getId();
-            bitString.set(subsetId, true);
+            this.flipBit(subsetId);
+            this.setsUsed++;
             currentSubsetIndex--;
         }
     }
-    Solution(ProblemInstance problemInstance){
+    Solution(ProblemInstance problemInstance) {
         x = new int[problemInstance.getNumElementsInX()];
         this.problemInstance = problemInstance;
         this.NUM_VARIABLES = problemInstance.getSubsets().size();
         this.constructInitialSolution();
         this.updateObjectiveSolutionValue();
         // FOR TESTING PURPOSES
-        /*
-        for(int i = 0; i < bitString.size();i++){
-            bitString.set(i,true);
-        }*/
+        Collections.fill(bitString, true);
+        this.setsUsed = bitString.size();
+        this.updateObjectiveSolutionValue();
     }
 
     @Override

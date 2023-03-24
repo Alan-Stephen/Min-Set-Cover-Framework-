@@ -8,8 +8,8 @@ public class SteepestDescent implements Hueristic{
     @Override
     public void applyHueristic(ProblemInstance problemInstance) {
         int bestIndex = -1;
-        int bestObjectiveValue = Integer.MAX_VALUE;
         Solution currentSolution = problemInstance.getCurrentSolution();
+        int bestObjectiveValue = currentSolution.currentObjectiveValue;
         for(int i = 0; i < problemInstance.getSubsets().size(); i++){
             currentSolution.flipBit(i);
             if(currentSolution.currentObjectiveValue <= bestObjectiveValue) {
@@ -17,6 +17,10 @@ public class SteepestDescent implements Hueristic{
                 bestIndex = i;
             }
             currentSolution.flipBit(i);
+        }
+        if(bestIndex == -1) {
+            System.out.println("nothing done");
+            return;
         }
         currentSolution.flipBit(bestIndex);
     }
