@@ -6,11 +6,18 @@ public class ProblemInstance {
 
     private Random random;
     private ArrayList<Subset> subsets = new ArrayList<Subset>();
+
+    private ArrayList<Solution> solutions = new ArrayList<>();
     private int elementsInX;
 
-    private Solution backUpSolution;
-    private Solution currentSolution;
+    public final int CURRENT_SOLUTION_INDEX = 0;
+    public final int BACKUP_SOLUTION_INDEX = 1;
+
     private Solution bestSolution;
+
+    public int getObjectiveValueOfSolution(int solutionIndex) {
+        return solutions.get(solutionIndex).currentObjectiveValue;
+    }
 
     public void copySolution(Solution from, Solution to){
         for(int i = 0; i < subsets.size(); i++){
@@ -19,22 +26,6 @@ public class ProblemInstance {
         from.updateObjectiveSolutionValue();
         to.updateObjectiveSolutionValue();
     }
-    public Solution getBackUpSolution() {
-        return backUpSolution;
-    }
-
-    public void setBackUpSolution(Solution backUpSolution) {
-        this.backUpSolution = backUpSolution;
-    }
-
-    public Solution getCurrentSolution() {
-        return currentSolution;
-    }
-
-    public void setCurrentSolution(Solution currentSolution) {
-        this.currentSolution = currentSolution;
-    }
-
     public Solution getBestSolution() {
         return bestSolution;
     }
@@ -43,7 +34,7 @@ public class ProblemInstance {
         this.bestSolution = bestSolution;
     }
 
-    ProblemInstance(String filePath, Random random){
+    ProblemInstance(String filePath, Random random,int numSolutions){
         this.random = random;
         try {
             File problemInstance = new File(filePath);
@@ -77,13 +68,18 @@ public class ProblemInstance {
             System.out.println("ERROR : FILE NOT FOUND");
             e.printStackTrace();
         }
-        currentSolution = new Solution(this);
-        backUpSolution = new Solution(this);
-        bestSolution = new Solution(this);
+
+        for(int i = 0; i < numSolutions;i++)
+            solutions.add(new Solution(this,random));
+        bestSolution = new Solution(this,random);
     }
 
     public int getSubsetElement(int subsetID, int elementIndex){
         return subsets.get(subsetID).getElement(elementIndex);
+    }
+
+    public Solution getSolution(int index){
+        return solutions.get(index);
     }
 
     @Override

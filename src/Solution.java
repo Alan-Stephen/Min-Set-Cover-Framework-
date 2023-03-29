@@ -1,9 +1,21 @@
 import java.util.*;
 
 public class Solution {
+    private final Random random;
     private ArrayList<Boolean> bitString= new ArrayList<>();
     private final int NUM_VARIABLES;
+
+    public int[] getX() {
+        return x;
+    }
+
     private int[] x;
+
+    private final boolean RANDOMIZE = true;
+
+    public int getSetsUsed() {
+        return setsUsed;
+    }
 
     private int setsUsed;
 
@@ -84,24 +96,35 @@ public class Solution {
         for(int i = 0; i < problemInstance.getSubsets().size();i++){
             bitString.add(false);
         }
-        int currentSubsetIndex = problemInstance.getSubsets().size() - 1;
-        while(updateElementsSatisfied() != x.length){
-            int subsetId = problemInstance.getSubsets().get(currentSubsetIndex).getId();
-            this.flipBit(subsetId);
-            this.setsUsed++;
-            currentSubsetIndex--;
+        if(this.RANDOMIZE){
+            for(int i = 0;i < bitString.size();i++) {
+                if (random.nextBoolean()) {
+                    this.flipBit(i);
+                }
+            }
+        } else {
+            int currentSubsetIndex = problemInstance.getSubsets().size() - 1;
+            while (updateElementsSatisfied() != x.length) {
+                int subsetId = problemInstance.getSubsets().get(currentSubsetIndex).getId();
+                this.flipBit(subsetId);
+                this.setsUsed++;
+                currentSubsetIndex--;
+            }
         }
     }
-    Solution(ProblemInstance problemInstance) {
+    Solution(ProblemInstance problemInstance, Random random) {
+        this.random = random;
         x = new int[problemInstance.getNumElementsInX()];
         this.problemInstance = problemInstance;
         this.NUM_VARIABLES = problemInstance.getSubsets().size();
+
         this.constructInitialSolution();
         this.updateObjectiveSolutionValue();
-        // FOR TESTING PURPOSES
+        /*
         Collections.fill(bitString, true);
         this.setsUsed = bitString.size();
         this.updateObjectiveSolutionValue();
+        */
     }
 
     @Override
