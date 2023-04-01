@@ -3,8 +3,7 @@ import java.util.Random;
 
 // todo: change this into a choice functoin.
 public class ReinforcementHyperHuerisitc {
-    private static final int TIME_TO_RUN = 10;
-    private final int INITIAL_SCORE = 5;
+    private static final int TIME_TO_RUN = 30;
     private final Random random;
     private ArrayList<Integer> scores = new ArrayList<>();
     private ArrayList<Hueristic> hueristics = new ArrayList<>();
@@ -12,7 +11,7 @@ public class ReinforcementHyperHuerisitc {
     private double depthOfSearch;
     private double intensityOfMutation;
 
-    private ProblemInstance problemInstance;
+    private final ProblemInstance problemInstance;
 
     ReinforcementHyperHuerisitc(ProblemInstance problemInstance, double depthOfSearch, double intensityOfMutation, Random random){
         this.random = random;
@@ -23,9 +22,11 @@ public class ReinforcementHyperHuerisitc {
         //add all huerisitics
         hueristics.add(new SteepestDescent(depthOfSearch));
         hueristics.add(new RandomMutation(random, intensityOfMutation));
+        hueristics.add(new BestSolutionBiasedCrossover(random, 0.3));
 
         for(int i = 0; i < hueristics.size(); i++){
-            scores.add(this.INITIAL_SCORE);
+            int INITIAL_SCORE = 5;
+            scores.add(INITIAL_SCORE);
         }
     }
 
@@ -55,7 +56,7 @@ public class ReinforcementHyperHuerisitc {
                 return;
             scores.set(hueristicIndex,scores.get(hueristicIndex) - 1);
         } else {
-            if(scores.get(hueristicIndex) == 10)
+            if(scores.get(hueristicIndex) == 20)
                 return;
             scores.set(hueristicIndex,scores.get(hueristicIndex) + 1);
         }
@@ -64,13 +65,27 @@ public class ReinforcementHyperHuerisitc {
     public void run(){
         long start = System.nanoTime();
         long duration = 1000000000L * TIME_TO_RUN;
+        int bestObjectiveScore = Integer.MAX_VALUE;
+        Solution currentSolution = problemInstance.getCurrentSolution();
         while((System.nanoTime()) - start < duration){
+
            int nextHeuristicIndex = getNextHeuristicIndex();
-           int prev = problemInstance.getObjectiveValueOfSolution(problemInstance.CURRENT_SOLUTION_INDEX);
+
+           int prev = currentSolution.getCurrentObjectiveValue();
            applyHeuristic(nextHeuristicIndex);
-           int post = problemInstance.getObjectiveValueOfSolution(problemInstance.CURRENT_SOLUTION_INDEX);
+           int post = currentSolution.getCurrentObjectiveValue();
+
            updateHueristicScore(nextHeuristicIndex, prev,post);
-           System.out.println(problemInstance.getSolution(problemInstance.CURRENT_SOLUTION_INDEX).currentObjectiveValue);
+
+           System.out.print(currentSolution.getCurrentObjectiveValue());
+           System.out.print(" Best : ");
+           System.out.println(bestObjectiveScore);
+           if(post <= bestObjectiveScore && currentSolution.isSolutionComplete()) {
+               bestObjectiveScore = post;
+               problemInstance.setBestSolution(currentSolution);
+           }
         }
+        System.out.println("BEST SOLUTION VALUE : ");
+        System.out.println(problemInstance.getBestSolution().getCurrentObjectiveValue());
     }
 }

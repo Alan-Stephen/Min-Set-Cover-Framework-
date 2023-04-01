@@ -3,30 +3,47 @@ import java.util.*;
 public class Solution {
     private final Random random;
     private ArrayList<Boolean> bitString= new ArrayList<>();
+
     private final int NUM_VARIABLES;
+
+    private int[] x;
 
     public int[] getX() {
         return x;
     }
 
-    private int[] x;
-
     private final boolean RANDOMIZE = true;
+
+    public void setSetsUsed(int setsUsed) {
+        this.setsUsed = setsUsed;
+    }
+
+    private int setsUsed;
+
+    public void setX(int[] x) {
+        this.x = x;
+    }
+
+    public int getCurrentObjectiveValue() {
+        return currentObjectiveValue;
+    }
+
+    public void setCurrentObjectiveValue(int currentObjectiveValue) {
+        this.currentObjectiveValue = currentObjectiveValue;
+    }
+
+    private int currentObjectiveValue = Integer.MAX_VALUE;
+
+    private final ProblemInstance problemInstance;
 
     public int getSetsUsed() {
         return setsUsed;
     }
 
-    private int setsUsed;
-
-    int currentObjectiveValue = Integer.MAX_VALUE;
-
     public ArrayList<Boolean> getBitString(){
         return bitString;
     }
-    private ProblemInstance problemInstance;
 
-    // TODO : FIX OBJECTIVE VALUE FUNCTION
     public void updateObjectiveSolutionValue(){
         int count = 0;
         int value = NUM_VARIABLES + x.length;
@@ -37,6 +54,26 @@ public class Solution {
         value -= this.updateElementsSatisfied();
 
         currentObjectiveValue = value;
+    }
+
+    boolean getBit(int i){
+        return bitString.get(i);
+    }
+
+    void setBit(int i,boolean value){
+        if(value == getBit(i)){
+            return;
+        }
+        flipBit(i);
+    }
+
+
+    public boolean isSolutionComplete(){
+        for(int num: x)
+            if(num == 0){
+                return false;
+            }
+        return true;
     }
 
     public int updateElementsSatisfied(){
@@ -67,7 +104,6 @@ public class Solution {
      *
      * */
 
-    // todo : REDO the entire valuation system for delta eval
     public void flipBit(int index){
         if(bitString.get(index)){
             Subset currentSubset = problemInstance.getSubsets().get(index);
@@ -91,6 +127,11 @@ public class Solution {
                 count++;
         this.currentObjectiveValue = (x.length + NUM_VARIABLES) - (count + (NUM_VARIABLES - setsUsed));
     }
+
+    public int getNumVariables() {
+        return NUM_VARIABLES;
+    }
+
     private void constructInitialSolution() {
         problemInstance.getSubsets().sort(Comparator.comparingInt(Subset::getSize));
         for(int i = 0; i < problemInstance.getSubsets().size();i++){

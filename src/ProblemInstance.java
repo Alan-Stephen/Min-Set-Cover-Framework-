@@ -3,35 +3,40 @@ import java.io.FileNotFoundException;
 import java.util.*;
 
 public class ProblemInstance {
-
     private Random random;
     private ArrayList<Subset> subsets = new ArrayList<Subset>();
-
-    private ArrayList<Solution> solutions = new ArrayList<>();
+    private Solution currentSolution;
+    private Solution backUpSolution;
     private int elementsInX;
-
-    public final int CURRENT_SOLUTION_INDEX = 0;
-    public final int BACKUP_SOLUTION_INDEX = 1;
-
     private Solution bestSolution;
 
-    public int getObjectiveValueOfSolution(int solutionIndex) {
-        return solutions.get(solutionIndex).currentObjectiveValue;
+    public Solution getCurrentSolution() {
+        return currentSolution;
+    }
+
+    public Solution getBackUpSolution() {
+        return backUpSolution;
     }
 
     public void copySolution(Solution from, Solution to){
         for(int i = 0; i < subsets.size(); i++){
             to.getBitString().set(i,from.getBitString().get(i));
         }
-        from.updateObjectiveSolutionValue();
-        to.updateObjectiveSolutionValue();
+
+        for(int i = 0; i < to.getX().length; i++){
+            to.getX()[i] = from.getX()[i];
+        }
+
+        to.setSetsUsed(from.getSetsUsed());
+
+        to.setCurrentObjectiveValue(from.getCurrentObjectiveValue());
     }
     public Solution getBestSolution() {
         return bestSolution;
     }
 
-    public void setBestSolution(Solution bestSolution) {
-        this.bestSolution = bestSolution;
+    public void setBestSolution(Solution solution) {
+        copySolution(solution,this.bestSolution);
     }
 
     ProblemInstance(String filePath, Random random,int numSolutions){
@@ -69,17 +74,9 @@ public class ProblemInstance {
             e.printStackTrace();
         }
 
-        for(int i = 0; i < numSolutions;i++)
-            solutions.add(new Solution(this,random));
+        currentSolution = new Solution(this,random);
+        backUpSolution = new Solution(this,random);
         bestSolution = new Solution(this,random);
-    }
-
-    public int getSubsetElement(int subsetID, int elementIndex){
-        return subsets.get(subsetID).getElement(elementIndex);
-    }
-
-    public Solution getSolution(int index){
-        return solutions.get(index);
     }
 
     @Override

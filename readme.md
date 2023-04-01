@@ -8,3 +8,4 @@
    - local searches?
    - Mutations?
    - we let reinforcement thing decide whether to local search or mutate solution.
+   - choice function with simulated annealing, make choice function very leniant

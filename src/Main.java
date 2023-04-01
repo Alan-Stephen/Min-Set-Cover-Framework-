@@ -11,8 +11,9 @@ public class Main {
         return count;
     }
     public static void main(String[] args) {
+        // todo : refactor the whole solution system.
         System.out.println("Hello world!");
-        Random random = new Random(1);
+        Random random = new Random(23222);
         ProblemInstance problemInstance = new ProblemInstance("test_instances/d4_2047_495.txt", random,2);
         ReinforcementHyperHuerisitc reinforcementHyperHuerisitc = new ReinforcementHyperHuerisitc(problemInstance,1.0,0.1,random);
         reinforcementHyperHuerisitc.run();

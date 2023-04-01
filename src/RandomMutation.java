@@ -2,8 +2,8 @@ import java.util.Random;
 
 public class RandomMutation implements Hueristic{
 
-    private double IOM;
-    private Random random;
+    private final double IOM;
+    private final Random random;
     RandomMutation(Random random, double IOM){
         this.random = random;
         this.IOM = IOM;
@@ -30,7 +30,7 @@ public class RandomMutation implements Hueristic{
     @Override
     public void applyHueristic(ProblemInstance problemInstance) {
         for (int i = 0; i < mapIOM(this.IOM); i++) {
-            problemInstance.getSolution(0).flipBit(random.nextInt(0, problemInstance.getSubsets().size()));
+            problemInstance.getCurrentSolution().flipBit(random.nextInt(0, problemInstance.getSubsets().size()));
         }
     }
 }

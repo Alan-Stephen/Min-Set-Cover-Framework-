@@ -28,12 +28,12 @@ public class SteepestDescent implements Hueristic{
         int numIterations = this.mapDOS(this.depthOfSearch);
         for (int x = 0; x < numIterations; x++) {
             int bestIndex = -1;
-            Solution currentSolution = problemInstance.getSolution(problemInstance.CURRENT_SOLUTION_INDEX);
-            int bestObjectiveValue = currentSolution.currentObjectiveValue;
+            Solution currentSolution = problemInstance.getCurrentSolution();
+            int bestObjectiveValue = currentSolution.getCurrentObjectiveValue();
             for (int i = 0; i < problemInstance.getSubsets().size(); i++) {
                 currentSolution.flipBit(i);
-                if (currentSolution.currentObjectiveValue <= bestObjectiveValue) {
-                    bestObjectiveValue = currentSolution.currentObjectiveValue;
+                if (currentSolution.getCurrentObjectiveValue() <= bestObjectiveValue) {
+                    bestObjectiveValue = currentSolution.getCurrentObjectiveValue();
                     bestIndex = i;
                 }
                 currentSolution.flipBit(i);
