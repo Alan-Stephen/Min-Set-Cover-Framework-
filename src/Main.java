@@ -15,7 +15,7 @@ public class Main {
         System.out.println("Hello world!");
         Random random = new Random(23222);
         ProblemInstance problemInstance = new ProblemInstance("test_instances/d4_2047_495.txt", random,2);
-        ReinforcementHyperHuerisitc reinforcementHyperHuerisitc = new ReinforcementHyperHuerisitc(problemInstance,1.0,0.1,random);
+        ReinforcementHyperHuerisitc reinforcementHyperHuerisitc = new ReinforcementHyperHuerisitc(problemInstance,1.0,0.1,0.97,200,5,random);
         reinforcementHyperHuerisitc.run();
     }
 }

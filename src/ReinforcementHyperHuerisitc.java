@@ -1,3 +1,4 @@
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -7,13 +8,19 @@ public class ReinforcementHyperHuerisitc {
     private final Random random;
     private ArrayList<Integer> scores = new ArrayList<>();
     private ArrayList<Hueristic> hueristics = new ArrayList<>();
+    private SimulatedAnnealingReheating coolingSchedule;
 
     private double depthOfSearch;
     private double intensityOfMutation;
 
+    private final int plateauBoundary;
+
     private final ProblemInstance problemInstance;
 
-    ReinforcementHyperHuerisitc(ProblemInstance problemInstance, double depthOfSearch, double intensityOfMutation, Random random){
+    ReinforcementHyperHuerisitc(ProblemInstance problemInstance, double depthOfSearch, double intensityOfMutation, double alpha, double reheatingFactor,int plateauBoundary,Random random){
+        double maxObjectiveValue = problemInstance.getNumElementsInX() + problemInstance.getSubsets().size();
+        this.plateauBoundary = plateauBoundary;
+        this.coolingSchedule = new SimulatedAnnealingReheating(maxObjectiveValue,alpha,reheatingFactor,random);
         this.random = random;
         this.problemInstance = problemInstance;
         this.depthOfSearch = depthOfSearch;
@@ -63,27 +70,54 @@ public class ReinforcementHyperHuerisitc {
     }
 
     public void run(){
-        long start = System.nanoTime();
-        long duration = 1000000000L * TIME_TO_RUN;
         int bestObjectiveScore = Integer.MAX_VALUE;
         Solution currentSolution = problemInstance.getCurrentSolution();
+
+        int plateauCounter = 0;
+
+        long duration = 1000000000L * TIME_TO_RUN;
+        long start = System.nanoTime();
         while((System.nanoTime()) - start < duration){
 
            int nextHeuristicIndex = getNextHeuristicIndex();
 
            int prev = currentSolution.getCurrentObjectiveValue();
+           problemInstance.copySolution(currentSolution,problemInstance.getBackUpSolution());
+
            applyHeuristic(nextHeuristicIndex);
+
            int post = currentSolution.getCurrentObjectiveValue();
 
-           updateHueristicScore(nextHeuristicIndex, prev,post);
 
-           System.out.print(currentSolution.getCurrentObjectiveValue());
+            if(prev == post) {
+                plateauCounter++;
+            }
+           else {
+                plateauCounter = 0;
+            }
+
+            if(!coolingSchedule.isMoveValid(prev,post)) {
+                System.out.println("rejected move\n");
+                problemInstance.copySolution(problemInstance.getBackUpSolution(),currentSolution);
+                scores.set(nextHeuristicIndex,scores.get(nextHeuristicIndex) - 1);
+            }else {
+                scores.set(nextHeuristicIndex,scores.get(nextHeuristicIndex) + 1);
+            }
+
+            System.out.print(currentSolution.getCurrentObjectiveValue());
            System.out.print(" Best : ");
            System.out.println(bestObjectiveScore);
+
            if(post <= bestObjectiveScore && currentSolution.isSolutionComplete()) {
                bestObjectiveScore = post;
                problemInstance.setBestSolution(currentSolution);
            }
+
+           if(plateauCounter == plateauBoundary){
+               System.out.println("Reheating");
+               coolingSchedule.reheat();
+           }
+           coolingSchedule.advanceTemperture();
         }
         System.out.println("BEST SOLUTION VALUE : ");
         System.out.println(problemInstance.getBestSolution().getCurrentObjectiveValue());
