@@ -1,3 +1,4 @@
+// change this to use random permutations, right now it's prioritising subsets with lower indexes.
 public class SteepestDescent implements Hueristic{
     double depthOfSearch;
 
@@ -5,27 +6,9 @@ public class SteepestDescent implements Hueristic{
         this.depthOfSearch = depthOfSearch;
     }
 
-    int mapDOS(double DOS){
-        if(DOS < 0.2 && DOS >= 0){
-            return 1;
-        } if(DOS < 0.4 && DOS >= 0.2) {
-            return 2;
-        } if(DOS < 0.6 && DOS >= 0.4){
-            return 3;
-        } if(DOS < 0.8 && DOS >= 0.6) {
-            return 4;
-        } if(DOS < 1.0 && DOS >= 0.8) {
-            return 5;
-        } if(DOS == 1.0){
-            return 6;
-        }
-        System.out.println("ERROR: INVALID DOS");
-        return -1;
-    }
-
     @Override
     public void applyHueristic(ProblemInstance problemInstance) {
-        int numIterations = this.mapDOS(this.depthOfSearch);
+        int numIterations = ProblemInstance.mapToInt(this.depthOfSearch);
         for (int x = 0; x < numIterations; x++) {
             int bestIndex = -1;
             Solution currentSolution = problemInstance.getCurrentSolution();

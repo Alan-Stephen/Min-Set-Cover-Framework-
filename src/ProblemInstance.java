@@ -14,6 +14,24 @@ public class ProblemInstance {
         return currentSolution;
     }
 
+    public static int mapToInt(double value){
+        if(value < 0.2 && value >= 0){
+            return 1;
+        } if(value < 0.4 && value >= 0.2) {
+            return 2;
+        } if(value < 0.6 && value >= 0.4){
+            return 3;
+        } if(value < 0.8 && value >= 0.6) {
+            return 4;
+        } if(value < 1.0 && value >= 0.8) {
+            return 5;
+        } if(value == 1.0){
+            return 6;
+        }
+        System.out.println("ERROR: INVALID IOM");
+        return -1;
+    }
+
     public Solution getBackUpSolution() {
         return backUpSolution;
     }
@@ -72,6 +90,7 @@ public class ProblemInstance {
         } catch (FileNotFoundException e) {
             System.out.println("ERROR : FILE NOT FOUND");
             e.printStackTrace();
+            System.exit(1);
         }
 
         currentSolution = new Solution(this,random);

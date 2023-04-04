@@ -4,7 +4,7 @@ import java.util.Random;
 
 // todo: change this into a choice functoin.
 public class ReinforcementHyperHuerisitc {
-    private static final int TIME_TO_RUN = 30;
+    private static final int TIME_TO_RUN = 10;
     private final Random random;
     private ArrayList<Integer> scores = new ArrayList<>();
     private ArrayList<Hueristic> hueristics = new ArrayList<>();
@@ -30,6 +30,7 @@ public class ReinforcementHyperHuerisitc {
         hueristics.add(new SteepestDescent(depthOfSearch));
         hueristics.add(new RandomMutation(random, intensityOfMutation));
         hueristics.add(new BestSolutionBiasedCrossover(random, 0.3));
+        hueristics.add(new RemoveRandomSet(intensityOfMutation,random));
 
         for(int i = 0; i < hueristics.size(); i++){
             int INITIAL_SCORE = 5;
@@ -107,6 +108,7 @@ public class ReinforcementHyperHuerisitc {
             System.out.print(currentSolution.getCurrentObjectiveValue());
            System.out.print(" Best : ");
            System.out.println(bestObjectiveScore);
+           System.out.println(problemInstance.getCurrentSolution());
 
            if(post <= bestObjectiveScore && currentSolution.isSolutionComplete()) {
                bestObjectiveScore = post;
@@ -121,5 +123,14 @@ public class ReinforcementHyperHuerisitc {
         }
         System.out.println("BEST SOLUTION VALUE : ");
         System.out.println(problemInstance.getBestSolution().getCurrentObjectiveValue());
+        System.out.println(problemInstance.getCurrentSolution());
+
+        int count = 0;
+        for(boolean bit: problemInstance.getBestSolution().getBitString()){
+            if(bit)
+                count++;
+        }
+
+        System.out.println(count);
     }
 }

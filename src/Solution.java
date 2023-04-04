@@ -1,5 +1,7 @@
 import java.util.*;
 
+// TOdo debug why there is one extra point added/minused to solution value;
+// fix fucking objective solution thing agian.
 public class Solution {
     private final Random random;
     private ArrayList<Boolean> bitString= new ArrayList<>();
@@ -12,13 +14,13 @@ public class Solution {
         return x;
     }
 
-    private final boolean RANDOMIZE = true;
+    private final boolean RANDOMIZE = false;
 
     public void setSetsUsed(int setsUsed) {
         this.setsUsed = setsUsed;
     }
 
-    private int setsUsed;
+    private int setsUsed = 0;
 
     public void setX(int[] x) {
         this.x = x;
@@ -48,10 +50,10 @@ public class Solution {
         int count = 0;
         int value = NUM_VARIABLES + x.length;
         for(Boolean bit: bitString)
-            if(!bit)
+            if(bit)
                 count++;
-        value -= count;
-        value -= this.updateElementsSatisfied();
+
+        value = value - (updateElementsSatisfied() + (NUM_VARIABLES - count));
 
         currentObjectiveValue = value;
     }
@@ -88,6 +90,7 @@ public class Solution {
                 x[currentSubset.getElement(y) - 1] += 1;
             }
         }
+
         int count = 0;
         for(int val: x){
             if(val != 0)
@@ -105,14 +108,13 @@ public class Solution {
      * */
 
     public void flipBit(int index){
+        Subset currentSubset = problemInstance.getSubsets().get(index);
         if(bitString.get(index)){
-            Subset currentSubset = problemInstance.getSubsets().get(index);
             for(int i = 0; i < currentSubset.getSize(); i++){
                 x[currentSubset.getElement(i) - 1]--;
             }
             this.setsUsed--;
         } else {
-            Subset currentSubset = problemInstance.getSubsets().get(index);
             for(int i = 0; i < currentSubset.getSize(); i++){
                 x[currentSubset.getElement(i) - 1]++;
             }
@@ -125,6 +127,7 @@ public class Solution {
         for(int i: x)
             if(i != 0)
                 count++;
+
         this.currentObjectiveValue = (x.length + NUM_VARIABLES) - (count + (NUM_VARIABLES - setsUsed));
     }
 
@@ -140,6 +143,7 @@ public class Solution {
         if(this.RANDOMIZE){
             for(int i = 0;i < bitString.size();i++) {
                 if (random.nextBoolean()) {
+                    this.setsUsed++;
                     this.flipBit(i);
                 }
             }
@@ -161,11 +165,10 @@ public class Solution {
 
         this.constructInitialSolution();
         this.updateObjectiveSolutionValue();
-        /*
+
         Collections.fill(bitString, true);
         this.setsUsed = bitString.size();
         this.updateObjectiveSolutionValue();
-        */
     }
 
     @Override
@@ -173,9 +176,9 @@ public class Solution {
         String returnString = "Solution { " + this.NUM_VARIABLES + " } : { ";
         for (Boolean aBoolean : bitString) {
             if (aBoolean) {
-                returnString = returnString.concat("1 ");
+                returnString = returnString.concat("1");
             } else {
-                returnString = returnString.concat("0 ");
+                returnString = returnString.concat("0");
             }
         }
 

@@ -11,11 +11,12 @@ public class Main {
         return count;
     }
     public static void main(String[] args) {
-        // todo : refactor the whole solution system.
         System.out.println("Hello world!");
-        Random random = new Random(23222);
-        ProblemInstance problemInstance = new ProblemInstance("test_instances/d4_2047_495.txt", random,2);
-        ReinforcementHyperHuerisitc reinforcementHyperHuerisitc = new ReinforcementHyperHuerisitc(problemInstance,1.0,0.1,0.97,200,5,random);
+        Random random = new Random(231);
+        ProblemInstance problemInstance = new ProblemInstance("test_instances/d1_50_500.txt", random,2);
+        // Low alpha (0.95 is good for instances where subsets are larger are there is a need for quicker convergence)
+        // for
+        ReinforcementHyperHuerisitc reinforcementHyperHuerisitc = new ReinforcementHyperHuerisitc(problemInstance,0.8,0.4,0.95,100,5,random);
         reinforcementHyperHuerisitc.run();
     }
 }
