@@ -16,7 +16,7 @@ public class BestSolutionBiasedCrossover implements Hueristic{
 
     @Override
     public void applyHueristic(ProblemInstance problemInstance) {
-        System.out.println("apply crossover");
+//        System.out.println("apply crossover");
        Solution bestSolution = problemInstance.getBestSolution();
        Solution currentSolution = problemInstance.getCurrentSolution();
 

@@ -19,9 +19,14 @@ public class RemoveRandomSet implements Hueristic{
             }
         }
 
-        System.out.println(usedIndexs.toString());
         if(usedIndexs.size() == 0)
             return;
-        solution.flipBit(usedIndexs.get(random.nextInt(0,usedIndexs.size())));
+        for(int i = 0; i < ProblemInstance.mapToInt(IOM) % 3;i++) {
+            int randomIndex = random.nextInt(0,usedIndexs.size());
+            solution.flipBit(usedIndexs.get(randomIndex));
+            usedIndexs.remove(randomIndex);
+            if(usedIndexs.size() == 0)
+                return;
+        }
     }
 }

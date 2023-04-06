@@ -17,20 +17,21 @@ public class ReinforcementHyperHuerisitc {
 
     private final ProblemInstance problemInstance;
 
-    ReinforcementHyperHuerisitc(ProblemInstance problemInstance, double depthOfSearch, double intensityOfMutation, double alpha, double reheatingFactor,int plateauBoundary,Random random){
+    ReinforcementHyperHuerisitc(ProblemInstance problemInstance, double depthOfSearch, double intensityOfMutation, double alpha, double reheatingFactor,int plateauBoundary){
         double maxObjectiveValue = problemInstance.getNumElementsInX() + problemInstance.getSubsets().size();
         this.plateauBoundary = plateauBoundary;
-        this.coolingSchedule = new SimulatedAnnealingReheating(maxObjectiveValue,alpha,reheatingFactor,random);
-        this.random = random;
+        this.coolingSchedule = new SimulatedAnnealingReheating(maxObjectiveValue,alpha,reheatingFactor,problemInstance.random);
+        this.random = problemInstance.random;
         this.problemInstance = problemInstance;
         this.depthOfSearch = depthOfSearch;
         this.intensityOfMutation = intensityOfMutation;
 
         //add all huerisitics
         hueristics.add(new SteepestDescent(depthOfSearch));
-        hueristics.add(new RandomMutation(random, intensityOfMutation));
-        hueristics.add(new BestSolutionBiasedCrossover(random, 0.3));
-        hueristics.add(new RemoveRandomSet(intensityOfMutation,random));
+        hueristics.add(new RandomMutation(problemInstance.random, intensityOfMutation));
+        hueristics.add(new BestSolutionBiasedCrossover(problemInstance.random, 0.3));
+        hueristics.add(new RemoveRandomSet(intensityOfMutation,problemInstance.random));
+        hueristics.add(new RuinAndRecreateHueristic(intensityOfMutation,random));
 
         for(int i = 0; i < hueristics.size(); i++){
             int INITIAL_SCORE = 5;
@@ -98,17 +99,11 @@ public class ReinforcementHyperHuerisitc {
             }
 
             if(!coolingSchedule.isMoveValid(prev,post)) {
-                System.out.println("rejected move\n");
                 problemInstance.copySolution(problemInstance.getBackUpSolution(),currentSolution);
                 scores.set(nextHeuristicIndex,scores.get(nextHeuristicIndex) - 1);
             }else {
                 scores.set(nextHeuristicIndex,scores.get(nextHeuristicIndex) + 1);
             }
-
-            System.out.print(currentSolution.getCurrentObjectiveValue());
-           System.out.print(" Best : ");
-           System.out.println(bestObjectiveScore);
-           System.out.println(problemInstance.getCurrentSolution());
 
            if(post <= bestObjectiveScore && currentSolution.isSolutionComplete()) {
                bestObjectiveScore = post;
@@ -116,21 +111,14 @@ public class ReinforcementHyperHuerisitc {
            }
 
            if(plateauCounter == plateauBoundary){
-               System.out.println("Reheating");
                coolingSchedule.reheat();
            }
            coolingSchedule.advanceTemperture();
         }
-        System.out.println("BEST SOLUTION VALUE : ");
-        System.out.println(problemInstance.getBestSolution().getCurrentObjectiveValue());
-        System.out.println(problemInstance.getCurrentSolution());
-
         int count = 0;
         for(boolean bit: problemInstance.getBestSolution().getBitString()){
             if(bit)
                 count++;
         }
-
-        System.out.println(count);
     }
 }

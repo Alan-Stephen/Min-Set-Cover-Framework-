@@ -10,7 +10,7 @@ public class RandomMutation implements Hueristic{
     }
     @Override
     public void applyHueristic(ProblemInstance problemInstance) {
-        System.out.printf("mutating\n");
+        //System.out.printf("mutating\n");
         for (int i = 0; i < ProblemInstance.mapToInt(this.IOM); i++) {
             problemInstance.getCurrentSolution().flipBit(random.nextInt(0, problemInstance.getSubsets().size()));
         }

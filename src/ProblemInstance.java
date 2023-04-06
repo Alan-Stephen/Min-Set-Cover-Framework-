@@ -3,7 +3,7 @@ import java.io.FileNotFoundException;
 import java.util.*;
 
 public class ProblemInstance {
-    private Random random;
+    Random random;
     private ArrayList<Subset> subsets = new ArrayList<Subset>();
     private Solution currentSolution;
     private Solution backUpSolution;
@@ -66,7 +66,6 @@ public class ProblemInstance {
             int numSubsets;
             ArrayList<String> problemAttributes = new ArrayList<>(List.of(reader.nextLine().split("\\s+")));
             problemAttributes.removeAll(Arrays.asList("", null));
-            System.out.println(problemAttributes.toString());
             numSubsets = Integer.parseInt(problemAttributes.get(0));
             elementsInX = Integer.parseInt(problemAttributes.get(1));
 
