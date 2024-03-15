@@ -2,7 +2,7 @@
 
 ## Description
 
-Optimisation framework library to solve the [Set Cover Problem](https://en.wikipedia.org/wiki/Set_cover_problem) using a Hyper-Hueristic Approach to the problem in order to produce "good-enough" answers with an acceptable runtime.
+Optimisation framework to solve the [Set Cover Problem](https://en.wikipedia.org/wiki/Set_cover_problem) using a Hyper-Hueristic Approach to the problem in order to produce "good-enough" answers with an acceptable runtime.
 
 ## Installation
 
